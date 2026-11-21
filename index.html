@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeskAssistant</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+  <script type="module" src="/src/main.ts" defer></script>
+</head>
+
+<body>
+  <!-- Floating Assistant Container -->
+  <main class="assistant-root">
+
+    <!-- Speech Bubble / Interaction Box -->
+    <section class="speech-bubble" id="speech-bubble">
+      <!-- Bubble Header (Draggable Region & Quick Actions) -->
+      <header class="bubble-header" data-tauri-drag-region="deep" id="drag-header">
+        <div class="agent-status">
+          <span class="status-indicator ready" id="status-indicator"></span>
+        </div>
+        <div class="window-controls" data-tauri-drag-region="false">
+          <button class="btn-icon" id="btn-settings" title="AI & Provider Settings">⚙</button>
+          <button class="btn-icon" id="btn-minimize" title="Minimize">−</button>
+          <button class="btn-icon btn-close" id="btn-close" title="Close">×</button>
+        </div>
+      </header>
+
+      <!-- VIEW 1: CHAT INTERFACE -->
+      <div class="view-container" id="chat-view">
+        <!-- Message Body -->
+        <div class="message-content" id="message-content">
+          <p class="agent-text">
+            Hello!
+          </p>
+        </div>
+
+        <!-- Dynamic Action / Command Output Area -->
+        <div class="action-feedback hidden" id="action-feedback"></div>
+
+        <!-- Quick Prompt / Command Input -->
+        <form class="input-container" id="prompt-form">
+          <input type="text" id="user-input" placeholder="Ask a question or enter a command..." autocomplete="off"
+            spellcheck="false" />
+          <button type="submit" id="btn-send" title="Send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="m5 12 14-7-7 14-2-5-5-2Z" />
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- VIEW 2: BYOK & PROVIDER SETTINGS -->
+      <div class="view-container hidden" id="settings-view">
+        <div class="settings-header">
+          <span>AI Settings (BYOK)</span>
+        </div>
+
+        <div class="settings-field">
+          <label for="setting-provider">Provider</label>
+          <select id="setting-provider">
+            <option value="gemini">Google Gemini</option>
+            <option value="openai">OpenAI (ChatGPT)</option>
+            <option value="anthropic">Anthropic (Claude)</option>
+            <option value="ollama">Ollama (Local LLM)</option>
+          </select>
+        </div>
+
+        <div class="settings-field">
+          <label for="setting-model-select">Model Selection</label>
+          <select id="setting-model-select">
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+
+        <div class="settings-field hidden" id="custom-model-group">
+          <label for="setting-model-custom">Custom Model Name</label>
+          <input type="text" id="setting-model-custom" placeholder="e.g. gemini-3.8-flash or llama3.2:3b" />
+        </div>
+
+        <!-- Saved API Keys Vault List -->
+        <div class="settings-field">
+          <label>Saved API Keys (Key Vault)</label>
+          <div class="keys-vault-list" id="keys-vault-list">
+            <!-- Dynamically populated via renderKeysVaultList -->
+          </div>
+        </div>
+
+        <!-- Cloud API Key Input Group -->
+        <div class="settings-field" id="api-key-group">
+          <label for="setting-api-key" id="api-key-label">Add / Update API Key</label>
+          <div class="input-with-button">
+            <input type="password" id="setting-api-key" placeholder="Paste your API key here..." autocomplete="off" />
+          </div>
+          <span class="field-hint">Keys are encrypted in OS Keychain & hardware vault. Never pushed to Git.</span>
+        </div>
+
+        <!-- Local Ollama URL Group -->
+        <div class="settings-field hidden" id="ollama-url-group">
+          <label for="setting-ollama-url">Ollama Service URL</label>
+          <input type="text" id="setting-ollama-url" placeholder="http://localhost:11434" />
+        </div>
+
+        <div class="settings-actions">
+          <button type="button" class="btn-secondary" id="btn-cancel-settings">Cancel</button>
+          <button type="button" class="btn-primary" id="btn-save-settings">Save</button>
+        </div>
+
+        <div class="settings-status hidden" id="settings-status"></div>
+      </div>
+
+    </section>
+
+    <!-- Character / Avatar Anchor (Also Draggable) -->
+    <section class="character-anchor" data-tauri-drag-region="deep" id="character-anchor" title="Drag me!">
+      <div class="character-halo"></div>
+      <div class="character-avatar">
+        <svg class="avatar-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="coreGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8" />
+              <stop offset="50%" stop-color="#818cf8" />
+              <stop offset="100%" stop-color="#c084fc" />
+            </linearGradient>
+            <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+          <!-- Core Floating Orb / Bot Face -->
+          <circle cx="50" cy="50" r="36" fill="url(#coreGlow)" filter="url(#glowEffect)" opacity="0.9" />
+          <circle cx="50" cy="50" r="32" fill="#13141f" />
+          <!-- Glowing Eyes -->
+          <ellipse class="avatar-eye eye-left" cx="40" cy="48" rx="4" ry="6" fill="#38bdf8" />
+          <ellipse class="avatar-eye eye-right" cx="60" cy="48" rx="4" ry="6" fill="#38bdf8" />
+          <!-- Subtle Smile / Expression -->
+          <path class="avatar-mouth" d="M 44 60 Q 50 65 56 60" stroke="#818cf8" stroke-width="2" stroke-linecap="round"
+            fill="none" />
+        </svg>
+      </div>
+    </section>
+
+  </main>
+</body>
+
+</html>
