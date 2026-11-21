@@ -2,35 +2,20 @@
 
 A lightweight desktop AI assistant built with **Tauri**, **Rust**, and **TypeScript**.
 
-DeskAssistant sits quietly on your desktop as a floating widget, allowing you to chat with multiple AI models and execute simple system tasks directly from your desktop.
-
----
+DeskAssistant sits on your desktop as a floating widget, allowing you to interact with AI models and execute basic system tasks.
 
 ## Features
 
-- **Multiple AI Providers (BYOK):** Use your own API keys for Google Gemini, OpenAI, Claude, or run locally with Ollama.
-- **Secure Key Storage:** API keys are stored directly in your OS Keychain (macOS Keychain / Windows Credential Manager) rather than configuration files or plaintext.
-- **System Actions:** Capable of running terminal commands and managing local files through safe Rust bindings.
-- **Minimalist Floating UI:** Dark glassmorphic floating interface with real-time status indicators and dynamic resizing.
-
----
-
-## Preview
-
-<!-- Add a screenshot of your app here -->
-<p align="center">
-  <img src="screenshot.png" alt="DeskAssistant Screenshot" width="500" />
-</p>
-
----
+- **Multiple AI Providers (BYOK):** Use your own API keys for Google Gemini, OpenAI, Claude, or run local models via Ollama.
+- **Secure Key Storage:** API keys are encrypted directly in your OS Keychain (macOS Keychain / Windows Credential Manager) and never stored in plaintext.
+- **System Actions:** Execute terminal commands and perform local file operations through safe Rust bindings.
+- **Minimalist UI:** Clean, floating dark-themed interface with dynamic window resizing and status indicators.
 
 ## Tech Stack
 
-- **Backend:** Rust, Tauri v2, `keyring` crate
-- **Frontend:** TypeScript, HTML5, CSS
-- **Bundler:** Vite
-
----
+- **Backend:** Rust, Tauri v2, `keyring`
+- **Frontend:** TypeScript, HTML, CSS
+- **Tooling:** Vite
 
 ## Getting Started
 
@@ -38,11 +23,11 @@ DeskAssistant sits quietly on your desktop as a floating widget, allowing you to
 
 - [Node.js](https://nodejs.org/) (v18+)
 - [Rust](https://www.rust-lang.org/)
-- Tauri build tools for your OS ([Tauri Prerequisites Guide](https://tauri.app/start/prerequisites/))
+- Tauri dependencies for your operating system
 
 ### Running Locally
 
-1. Clone the repo:
+1. Clone the repository:
    ```bash
    git clone https://github.com/YOUR_USERNAME/DeskAssistant.git
    cd DeskAssistant
@@ -53,18 +38,12 @@ DeskAssistant sits quietly on your desktop as a floating widget, allowing you to
    npm install
    ```
 
-3. Start in development mode:
+3. Run in development mode:
    ```bash
    npm run tauri dev
    ```
 
-4. Build for release:
+4. Build executable:
    ```bash
    npm run tauri build
    ```
-
----
-
-## License
-
-[MIT](LICENSE)
